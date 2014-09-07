@@ -12,11 +12,25 @@ When a fish is spawned, the visual and auditory oscillations are selected as are
 
 var gameModel = (function() {
     console.log("creating gameModel");
+    
+    var fishLifetime = 1000;
+    var minFishSpawn = 500;
+    var maxFishSpawn = 1000;
+    
+    var avmode = "visual";
+    
+    function setAVMode(mode){
+        avmode = mode;
+    }
+    
+    // record the start time of the game and set the end time, all games are the same length
     var startTime = (new Date()).getTime();
-    var endTime = startTime + 30*1000;
+    var gameDuration = 10; // in seconds
+    var endTime = startTime + gameDuration*1000;
 
-
+    // specify the size of the gameboard in the model (having nothing to do with pixels!!)
     var width = height = 100;
+
 
     // state of scrolling background
     var imageOffset = 0; // this varies from -100 to 100
@@ -25,18 +39,23 @@ var gameModel = (function() {
     var lastTime = (new Date()).getTime();
 
     // state of the fish
+    // we ought to use a model for the fish... maybe in the next version... but there is only one fish at a time...
     var fishPos = [0, 50];
     var fishXVelocity = 10;
     var fishYVelocity = 0;
     var fishVisible = true;
-    var fishVisualOscillation = 'fast';
-    var fishAudioOscillation = 'fast';
+    var fishVisual = 'fast';
+    var fishAudio = 'fast';
     var fishSide = 'left';
     var fishCount = 0;
     var fishBirth = 0;
 
     function isGoodFish() {
-        return fishVisualOscillation == 'slow';
+        if (avmode=="visual"){
+            return fishVisual == 'slow';
+        } else {
+            return fishAudio == 'slow';
+        }
     }
 
     function getFishVisible() {
@@ -59,8 +78,8 @@ var gameModel = (function() {
         }
         fishPos = [0, 50];
         fishVisible = true;
-        fishVisualOscillation = (randBool()) ? 'fast' : 'slow';
-        fishAudioOscillation = (randBool()) ? 'fast' : 'slow';
+        fishVisual = (randBool()) ? 'fast' : 'slow';
+        fishAudio = (randBool()) ? 'fast' : 'slow';
         fishSide = (randBool()) ? 'left' : 'right';
         fishXVelocity = (fishSide == 'left') ? 20 : -20;
         fishYVelocity = 0;
@@ -70,13 +89,14 @@ var gameModel = (function() {
         
         fishCount++;
         console.log("spawned fish " + (new Date()).getTime());
-        console.log(JSON.stringify([fishVisualOscillation, fishVisualOscillation,fishSide,fishXVelocity]));
-        setTimeout(killFishIfVisible(fishCount), 3000);
+        console.log(JSON.stringify([fishVisual, fishVisual,fishSide,fishXVelocity]));
+        setTimeout(killFishIfVisible(fishCount), fishLifetime);
         
         fishBirth = (new Date()).getTime();
-        var entry = {time:fishBirth-gameStart, action:'birth',visual:fishVisualOscillation,audio:fishAudioOscillation, side:fishSide};
+        console.log("about to push birth!");
+        var entry = {time:fishBirth-gameStart, action:'birth',visual:fishVisual,audio:fishAudio, side:fishSide};
         gameControl.pushLog(entry);
-        console.log(JSON.stringify(entry));
+        console.log("just pushed birth"+JSON.stringify(entry));
         gameView.playFishAudio();
     }
     
@@ -86,7 +106,7 @@ var gameModel = (function() {
             console.log("Times up!");
             if (fishVisible && (fishCount == n)) {
                 var now = (new Date()).getTime();
-                var entry=({time:now-gameStart,action:"missedFish"});
+                var entry={time:now-gameStart,action:"missedFish",visual:fishVisual,audio:fishAudio, side:fishSide};
                 gameControl.pushLog(entry);
                 console.log(entry);
                 killFish();
@@ -97,7 +117,7 @@ var gameModel = (function() {
     function killFish() {
 
         fishVisible = false;
-        var delay = 1000 + randInt(1000);
+        var delay = minFishSpawn + randInt(maxFishSpawn-minFishSpawn);
         console.log("fish killed... new fish will spawn in " + delay + " ms");
         setTimeout(spawnFish, delay);
         gameView.stopFishAudio();
@@ -107,16 +127,23 @@ var gameModel = (function() {
     function start() {
         fishVisible = false;
         gameStart = (new Date()).getTime();
-        var delay = 2000 + randInt(1000);
+        var delay = 1000 + randInt(1000);
         console.log("game started... new fish will spawn in " + delay + " ms");
         setTimeout(spawnFish, delay)
     }
     
-    function logKeyPress(fishType,key,now){
+    function logKeyPress(fishType,key,isCorrect,now){
         var entry = 
-          {time:(now-gameStart),action:'keypress',fishType:fishType, key:key, 
-             consistent: fishAudioOscillation==fishVisualOscillation, 
-             reaction:(now-fishBirth)};
+          {  time:(now-gameStart),
+             action:'keypress',
+             fishType:fishType, 
+             key:key, 
+             correct: (isCorrect=='correct'),
+             consistent: fishAudio==fishVisual, 
+             reaction:(now-fishBirth),
+             visual:fishVisual,
+             audio:fishAudio, 
+             side:fishSide};
         gameControl.pushLog(entry);
         console.log(JSON.stringify(entry));
     }
@@ -177,11 +204,11 @@ var gameModel = (function() {
         getImageOffset: function() {
             return (imageOffset)
         },
-        getFishAudioOscillation: function() {
-            return fishAudioOscillation;
+        getFishAudio: function() {
+            return fishAudio;
         },
-        getFishVisualOscillation: function() {
-            return fishVisualOscillation;
+        getFishVisual: function() {
+            return fishVisual;
         },
         getFishSide: function() {
             return fishSide;
@@ -190,6 +217,7 @@ var gameModel = (function() {
         isGoodFish: isGoodFish,
         start: start,
         logKeyPress: logKeyPress,
-        update: update
+        update: update,
+        setAVMode: setAVMode
     }
 }());

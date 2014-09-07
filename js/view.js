@@ -47,7 +47,7 @@ var gameView = (function(){
     }
     
     function playFishAudio(){
-        fishSound = (gameModel.getFishAudioOscillation()=='fast')?soundFast:soundSlow;
+        fishSound = (gameModel.getFishAudio()=='fast')?soundFast:soundSlow;
         fishSound.play();
     }
     
@@ -61,7 +61,7 @@ var gameView = (function(){
 
         drawBackground(img1); // draw the background flowing by in a seamless way...
         console.log(gameModel.getFishVisible());
-        var hz = (gameModel.getFishVisualOscillation()=='fast')?8:5;
+        var hz = (gameModel.getFishVisual()=='fast')?8:5;
         if (gameModel.getFishVisible()){
             drawFish(imgFishL,hz);
         }
