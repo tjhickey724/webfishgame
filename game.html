@@ -2,19 +2,33 @@
 <html>
 <head>
   <title>game</title>
-  <link rel="stylesheet" href="css/game.css"/>
+
   <link href="css/bootstrap-3.2.0-dist/css/bootstrap.css" rel="stylesheet" />
   <link href="css/bootstrap-3.2.0-dist/css/bootstrap-theme.min.css" rel="stylesheet" />
-
+  <link rel="stylesheet" href="css/game.css"/>
 </head>
 <body>
+	
+
+	
 	<div class="container">
-    <div class="page-header">
+
+    <div id="header" class="page-header">
 	        <div style="text-align:right"><a href="/auth/logout">logout</a></div>
         <h1> <span id="title">The Brandeis A/V Interaction Game</span>
         </h1>
 
     </div>
+
+
+	<div id="game-view" class="view">
+
+  <canvas id="canvas"></canvas>
+  <audio id="fastFish" src="sounds/8hz/fish.wav"></audio>
+  <audio id="slowFish" src="sounds/8hz/fish.wav"></audio>
+  <audio id="good" src="sounds/good.wav"></audio>
+  <audio id="bad" src="sounds/bad.wav"></audio>
+	</div>
 
 	<div id="consent-view" class="view">
 		<div>
@@ -31,16 +45,10 @@
 		</div>
 		
 		
-	<div id="game-view" class="view">
 
-  <canvas id="canvas" width="400" height="400"></canvas>
-  <audio id="fastFish" src="sounds/8hz/fish.wav"></audio>
-  <audio id="slowFish" src="sounds/8hz/fish.wav"></audio>
-  <audio id="good" src="sounds/good.wav"></audio>
-  <audio id="bad" src="sounds/bad.wav"></audio>
-	</div>
 	
 	<div id="log-view" class="view">
+		<button onclick="gameControl.showView('dashboard')">Play again?</a>
   <div id="log">The Log goes here</div>
 	</div>
 	

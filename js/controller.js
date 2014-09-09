@@ -5,6 +5,11 @@ var gameControl = (function() {
             window.location.hash = '#' + selected;
             $('.view').hide();
             $('#'+selected+'-view').show();
+            if (selected=="game"){
+                $('#header').hide();
+            }else {
+                $('#header').show();
+            }
             console.log("showing "+'#'+selected+'-view')
         };
 

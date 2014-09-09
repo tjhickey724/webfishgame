@@ -58,6 +58,10 @@ var gameView = (function(){
 
 
     function update(now){
+            var canvas = document.getElementById('canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        
 
         drawBackground(img1); // draw the background flowing by in a seamless way...
         console.log(gameModel.getFishVisible());
@@ -67,6 +71,8 @@ var gameView = (function(){
         }
         
     }
+    
+
    
 
 function drawFish(img,hz){

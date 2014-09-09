@@ -14,7 +14,7 @@ var gameModel = (function() {
     console.log("creating gameModel");
     
     var fishLifetime = 1000;
-    var minFishSpawn = 500;
+    var minFishSpawn = 200;
     var maxFishSpawn = 1000;
     
     var avmode = "visual";
@@ -25,7 +25,7 @@ var gameModel = (function() {
     
     // record the start time of the game and set the end time, all games are the same length
     var startTime = (new Date()).getTime();
-    var gameDuration = 10; // in seconds
+    var gameDuration = 60; // in seconds
     var endTime = startTime + gameDuration*1000;
 
     // specify the size of the gameboard in the model (having nothing to do with pixels!!)
