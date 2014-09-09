@@ -18,14 +18,14 @@ var gameControl = (function() {
     var gameStart = (new Date()).getTime();
     
     function initStat(name){
-        return( {name:name, tries:0,correct:0,missed:0,time:0,reaction:0,accuracy:0} );
+        return( {name:name, tries:0,correct:0,incorrect:0,missed:0,time:0,reaction:0,missing:0,wrong:0,accuracy:0} );
         };
         
     function initGameStats(){
       return (     
        {
            fast:{fast:initStat("ff"), slow:initStat("fs")},
-           slow:{fast:initStat("sf"), slow:initStat("ss")}
+           slow:{fast:initStat("sf"), slow:initStat("ss")} 
        });
      };
      
@@ -61,11 +61,21 @@ var gameControl = (function() {
             if (event.correct) {
                 stats.correct++;
                 stats.time += event.reaction;
-                stats.reaction = stats.time/stats.correct;
-                stats.accuracy = Math.round(stats.correct/stats.tries*100)+"%";
-            } 
+            } else {
+                stats.incorrect++;
+            }
         } else if (event.action=="missed"){
             stats.missed ++;
+            stats.tries++;
+
+        }
+        if (stats.tries>0){
+            stats.missing = Math.round(stats.missed/stats.tries*100)+"%";
+            stats.accuracy = Math.round(stats.correct/stats.tries*100)+"%";
+            stats.wrong = Math.round(stats.incorrect/stats.tries*100)+"%";
+        }
+        if (stats.correct>0) {
+            stats.reaction = Math.round(stats.time/stats.correct);           
         }
         console.log("stats are "+JSON.stringify(stats));
     }
@@ -88,7 +98,6 @@ var gameControl = (function() {
             }
         }
 
-        gameModel.goodKeyPress();
 
     }
 
@@ -107,7 +116,6 @@ var gameControl = (function() {
                 gameView.playGood();
             }
         }
-        gameModel.badKeyPress();
 
     }
     
@@ -148,8 +156,7 @@ var gameControl = (function() {
     
     return({
         showView:showView,
-        badKeyPress:badKeyPress,
-        goodKeyPress:goodKeyPress,
+
         start:start,
         runVisual:runVisual,
         runAural:runAural,

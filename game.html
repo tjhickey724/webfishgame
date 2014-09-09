@@ -11,7 +11,7 @@
 	
 
 	
-	<div class="container">
+
 
     <div id="header" class="page-header">
 	        <div style="text-align:right"><a href="/auth/logout">logout</a></div>
@@ -42,6 +42,13 @@
 		<button id="visual" onclick="gameControl.runVisual()"> Visual </button>
 		<br/>
 		<button id="aural" onclick="gameControl.runAural()"> Aural</button>
+		<h1>Set Parameters</h1>
+		<div>
+			<input type="text" id="lifetime" value="1000"> fish lifetime (in ms)<br/>
+			<input type="text" id="minIFI" value="500"> minimum interfish interval (in ms)<br/>
+			<input type="text" id="maxIFI" value="1500"> maximum interfish interval (in ms)<br/>
+		</div>
+			
 		</div>
 		
 		
@@ -56,7 +63,6 @@
 		<canvas id="graphCanvas" width="400" height="400"></canvas>
 		</div>
 		
-</div>
 
 <script src="js/jquery-2.1.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>

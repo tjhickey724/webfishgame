@@ -5,3 +5,8 @@ html,body {
     margin: 0px;
     background: #ccffcc;
 }
+
+#canvas2 {
+    background-position: 0px;
+    background-image: url('../images/stream.jpg');
+}

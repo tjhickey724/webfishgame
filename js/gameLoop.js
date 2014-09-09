@@ -5,10 +5,15 @@ var gameLoop = (function(){
     var count=0;
     var fps=60;
     var interval = 1000/fps;
+    var gameOver=false;
+    
+    function stopGame(){
+        gameOver=true;
+    }
     
     
     function gameLoop() {
-
+        if (gameOver) return;
         count++;
         
         window.requestAnimationFrame(gameLoop);
@@ -28,7 +33,8 @@ var gameLoop = (function(){
     }
     
     gameLoopObj = {
-        start: gameLoop
+        start: gameLoop,
+        stop: stopGame
     };
     
     return(gameLoopObj);

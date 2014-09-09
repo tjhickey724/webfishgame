@@ -58,12 +58,9 @@ var gameView = (function(){
 
 
     function update(now){
-            var canvas = document.getElementById('canvas');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        
 
-        drawBackground(img1); // draw the background flowing by in a seamless way...
+
+        drawBackground2(img1); // draw the background flowing by in a seamless way...
         console.log(gameModel.getFishVisible());
         var hz = (gameModel.getFishVisual()=='fast')?8:5;
         if (gameModel.getFishVisible()){
@@ -106,7 +103,16 @@ on a canvas of dimension (W,H)
 one can flip the canvas vertically, then translate y'+h from the bottom and draw the image ...
 */
 
-    function drawBackground(img) {
+    /* this version tries to use CSS but it needs the image to be handled by CSS too */
+    function drawBackground1(img) {
+        var canvas = document.getElementById('canvas');
+        var yValue = gameModel.getImageOffset()*5;
+        document.getElementById('canvas').style.backgroundPosition = '0px ' + yValue + 'px';
+        
+    }
+
+    /* this image draws the background using the canvas API */
+    function drawBackground2(img) {
         var canvas = document.getElementById('canvas');
         var ctx = canvas.getContext('2d');
         var cw = canvas.width;
