@@ -1,5 +1,5 @@
 var gameControl = (function() {
-    console.log("loading controller");
+    debugPrint("loading controller");
 
     var showView = function(selected) {
             window.location.hash = '#' + selected;
@@ -10,7 +10,7 @@ var gameControl = (function() {
             }else {
                 $('#header').show();
             }
-            console.log("showing "+'#'+selected+'-view')
+            debugPrint("showing "+'#'+selected+'-view')
         };
 
 
@@ -32,7 +32,7 @@ var gameControl = (function() {
      var gameStats = initGameStats();
     
     function pushLog(data){
-        console.log("pushing "+data);
+        debugPrint("pushing "+data);
         log.push(data);
         updateStats(data);
     }
@@ -44,7 +44,7 @@ var gameControl = (function() {
         var now = (new Date()).getTime();
 
         var keyPressed = String.fromCharCode(event.keyCode);
-        //console.log("keydown = "+keyPressed);
+        //debugPrint("keydown = "+keyPressed);
         if (keyPressed == "P") {
             if (!gameModel.getFishVisible()) return;
             goodKeyPress(now);
@@ -77,12 +77,12 @@ var gameControl = (function() {
         if (stats.correct>0) {
             stats.reaction = Math.round(stats.time/stats.correct);           
         }
-        console.log("stats are "+JSON.stringify(stats));
+        debugPrint("stats are "+JSON.stringify(stats));
     }
 
     function goodKeyPress(now) {
 
-        console.log("pressed P");
+        debugPrint("pressed P");
 
 
         if (gameModel.getFishVisible()) {
@@ -102,7 +102,7 @@ var gameControl = (function() {
     }
 
     function badKeyPress(now) {
-        console.log("pressed L");
+        debugPrint("pressed L");
 
 
         if (gameModel.getFishVisible()) {

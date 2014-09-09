@@ -3,7 +3,7 @@ this object has an update method which draws the current model onto the canvas
 **/
 
 var gameView = (function(){
-        console.log("creating gameView");
+        debugPrint("creating gameView");
     
     var canvas = document.getElementById('canvas'),
         cw = canvas.width,
@@ -61,7 +61,7 @@ var gameView = (function(){
 
 
         drawBackground2(img1); // draw the background flowing by in a seamless way...
-        console.log(gameModel.getFishVisible());
+        debugPrint(gameModel.getFishVisible());
         var hz = (gameModel.getFishVisual()=='fast')?8:5;
         if (gameModel.getFishVisible()){
             drawFish(imgFishL,hz);
@@ -85,7 +85,7 @@ function drawFish(img,hz){
     var fishImage = (gameModel.getFishSide()=='left')?imgFishL:imgFishR;
     var hscale = (gameModel.getFishSide()=='left')?1:-1;
     
-    //console.log("in drawFish:"+JSON.stringify([fishImage==imgFishL, fishImage==imgFishR,fishPos]));
+    //debugPrint("in drawFish:"+JSON.stringify([fishImage==imgFishL, fishImage==imgFishR,fishPos]));
 
     ctx.save();
     ctx.translate((fishPos[0])*cw/100,(fishPos[1])*ch/100);

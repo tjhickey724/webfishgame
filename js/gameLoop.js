@@ -1,5 +1,5 @@
 var gameLoop = (function(){
-    console.log("creating gameLoop");
+    debugPrint("creating gameLoop");
     
     var lastTime = currentTime();
     var count=0;
@@ -20,9 +20,11 @@ var gameLoop = (function(){
 
         var now = currentTime();;
         var delta = (now-lastTime);
-        //    console.log("time="+currentTime);
+        lastTime=now;
+        //    debugPrint("time="+currentTime);
 
         if(delta > interval) {
+            debugPrint("delta="+ delta);
             gameModel.update(now);
             gameView.update(now);
         }
