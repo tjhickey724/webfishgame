@@ -150,8 +150,8 @@ var gameModel = (function() {
         setTimeout(spawnFish, delay)
         
         var canvas = document.getElementById('canvas');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width = 400; //window.innerWidth;
+        canvas.height = 400; //window.innerHeight;
         
     }
     
