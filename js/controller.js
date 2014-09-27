@@ -1,3 +1,7 @@
+/**
+The game controller handles all user input, including clicking on checkboxes,
+pressing keys, starting and ending the game, etc.
+**/
 var gameControl = (function() {
     debugPrint("loading controller");
 
@@ -24,8 +28,9 @@ var gameControl = (function() {
     function initGameStats(){
       return (     
        {
-           fast:{fast:initStat("ff"), slow:initStat("fs")},
-           slow:{fast:initStat("sf"), slow:initStat("ss")} 
+           fast:{fast:initStat("ff"), slow:initStat("fs"), none:initStat("fo")},
+           slow:{fast:initStat("sf"), slow:initStat("ss"), none:initStat("so")},
+           none:{fast:initStat("ff"), slow:initStat("fs"), none:initStat("oo")}
        });
      };
      
@@ -55,6 +60,7 @@ var gameControl = (function() {
     }
     
     function updateStats(event){
+        console.log(event.visual+" "+event.audio);
         var stats = gameStats[event.visual][event.audio];
         if (event.action=="keypress"){
             stats.tries++;
@@ -84,6 +90,17 @@ var gameControl = (function() {
 
         debugPrint("pressed P");
 
+        // if there is not visual or audio any keypresses are wrong!
+        if (!gameModel.getFishVisual() ){
+            gameModel.logKeyPress('novis','P','incorrect',now);
+            gameView.playBad(now);
+            return;
+        }
+        if (!gameModel.getFishAudio()){
+            gameModel.logKeyPress('noaud','P','incorrect',now);
+            gameView.playBad(now);
+            return;
+        }
 
         if (gameModel.getFishVisible()) {
             gameModel.killFish();
@@ -103,8 +120,25 @@ var gameControl = (function() {
 
     function badKeyPress(now) {
         debugPrint("pressed L");
+        
+        // if there is not visual or audio any keypresses are wrong!
+        if (!gameModel.getFishVisual() ){
+            gameModel.logKeyPress('novis','L','incorrect',now);
+            gameView.playBad(now);
+            return;
+        }
+        if (!gameModel.getFishAudio()){
+            gameModel.logKeyPress('noaud','L','incorrect',now);
+            gameView.playBad(now);
+            return;
+        }
 
-
+       // if there is not visual or audio any keypresses are wrong!
+        if (!gameModel.getFishVisual() || !gameModel.getFishAudio()){
+            gameModel.logKeyPress('odd','P','incorrect',now);
+            return;
+        }
+        
         if (gameModel.getFishVisible()) {
             gameModel.killFish();
 

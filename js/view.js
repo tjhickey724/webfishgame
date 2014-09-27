@@ -48,7 +48,8 @@ var gameView = (function(){
     
     function playFishAudio(){
         fishSound = (gameModel.getFishAudio()=='fast')?soundFast:soundSlow;
-        fishSound.play();
+        if (gameModel.getFishAudio()!='none')
+            fishSound.play();
     }
     
     function stopFishAudio(){
@@ -63,12 +64,30 @@ var gameView = (function(){
         drawBackground2(img1); // draw the background flowing by in a seamless way...
         debugPrint(gameModel.getFishVisible());
         var hz = (gameModel.getFishVisual()=='fast')?8:5;
+        
+        drawStats();
+        if (gameModel.getFishVisual()=='none'){
+            return;
+        }
         if (gameModel.getFishVisible()){
             drawFish(imgFishL,hz);
         }
+
         
     }
-    
+   
+function drawStats(){
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var cw = canvas.width;
+    var ch = canvas.height;
+    ctx.font = "10pt monospace"
+    var status  =gameModel.getStatus();
+    ctx.fillText("Correct: "+status.correct+" Incorrect:"+status.incorrect+" Missed:"+status.missed,cw/2-30, ch/2);
+    ctx.fillText(" Reaction Time:"+  Math.round(status.lastReactionTime),cw/2-30,ch/2+20);
+    ctx.fillText(" Time Remaining:" +Math.round(status.timeRemaining),cw/2-30,ch/2+40);
+    ctx.fillText(" "+gameLoop.getLastStepTime()+"ms "+Math.round(1000/gameLoop.getLastStepTime())+"fps",cw/2-10,ch-20);
+} 
 
    
 
@@ -84,15 +103,19 @@ function drawFish(img,hz){
     var scale = 1+(1-Math.cos(Math.PI*2*hz*sec))/2*1.0;
     var fishImage = (gameModel.getFishSide()=='left')?imgFishL:imgFishR;
     var hscale = (gameModel.getFishSide()=='left')?1:-1;
-    
-    //debugPrint("in drawFish:"+JSON.stringify([fishImage==imgFishL, fishImage==imgFishR,fishPos]));
 
+    var x = fishPos[0]*cw/100-w/2;
+    var y = fishPos[1]*ch/100-h/2*scale;
+    ctx.drawImage(fishImage,x,y,w,h*scale);
+
+    //debugPrint("in drawFish:"+JSON.stringify([fishImage==imgFishL, fishImage==imgFishR,fishPos]));
+/*
     ctx.save();
     ctx.translate((fishPos[0])*cw/100,(fishPos[1])*ch/100);
     ctx.scale(hscale,scale);
     ctx.drawImage(img,-w/2,-h/2,w,h);
     ctx.restore();
-    
+  */
 
     //ctx.drawImage(img,(fishPos[0])*cw/100-w/2,(fishPos[1])*ch/100-h/2,w,h);
 }

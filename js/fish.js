@@ -1,3 +1,6 @@
+/**
+  This defines the fish object, but I'm not yet using it....
+**/
 function Fish(now,side,visual,audio){
     var birth=now;
     var y=50;
