@@ -45,10 +45,24 @@
 		<button id="aural" onclick="gameControl.runAural()"> Aural</button>
 		<h1>Set Parameters</h1>
 		<div>
+			<input type="text" id="gameDuration" value="60"> game Length (in sec)<br/>
 			<input type="text" id="lifetime" value="2000"> fish lifetime (in ms)<br/>
 			<input type="text" id="minIFI" value="500"> minimum interfish interval (in ms)<br/>
 			<input type="text" id="maxIFI" value="2000"> maximum interfish interval (in ms)<br/>
+			<input type="text" id="oddBallRate" value="25"> maximum interfish interval (in percent)<br/>
 		</div>
+		<h1>Rules</h1>
+		<ul><li>
+		The good fish are those that oscillate slowly, the bad fish oscillate quickly.
+		</li><li>
+		In VISUAL mode you use the visual oscillation speed to determine if fish are good or bad.
+		</li><li>
+		In AURAL mode, you use the audio oscillation to determine the goodness/badness of fish
+		</li><li>
+		Press "P" for good fish, and "L" for bad fish.
+		</li><li>
+		BUT if fish has no audio or no video it is an oddball and you shouldn't press any keys!
+		</li></ul>
 			
 		</div>
 		

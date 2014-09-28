@@ -83,9 +83,10 @@ function drawStats(){
     var ch = canvas.height;
     ctx.font = "10pt monospace"
     var status  =gameModel.getStatus();
-    ctx.fillText("Correct: "+status.correct+" Incorrect:"+status.incorrect+" Missed:"+status.missed,cw/2-30, ch/2);
-    ctx.fillText(" Reaction Time:"+  Math.round(status.lastReactionTime),cw/2-30,ch/2+20);
-    ctx.fillText(" Time Remaining:" +Math.round(status.timeRemaining),cw/2-30,ch/2+40);
+    var correctness = Math.round(100*status.correct/(status.correct+status.incorrect+status.missed));
+    ctx.fillText(""+correctness+"%",cw/2-30, ch/2);
+    ctx.fillText(""+  Math.round(status.lastReactionTime)+" ms",cw/2-30,ch/2+20);
+    ctx.fillText("T - " +Math.round(status.timeRemaining)+" sec",cw/2-30,ch/2+40);
     ctx.fillText(" "+gameLoop.getLastStepTime()+"ms "+Math.round(1000/gameLoop.getLastStepTime())+"fps",cw/2-10,ch-20);
 } 
 

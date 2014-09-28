@@ -37,7 +37,7 @@ var gameLoop = (function(){
         //    debugPrint("time="+currentTime);
 
         if(true) { //delta > interval) {
-            debugPrint("delta="+ delta);
+            //debugPrint("delta="+ delta);
             gameModel.update(now);
             gameView.update(now);
         }

@@ -11,15 +11,15 @@ When a fish is spawned, the visual and auditory oscillations are selected as are
 
 
 var gameModel = (function() {
-    console.log("creating gameModel");
+    debugPrint("creating gameModel");
 
-    var fishLifetime = 4000; // how long fish stays on the screen in ms
-    var minFishSpawn = 500; // minimum time before new fish appears
-    var maxFishSpawn = 1500; // maximum time before new fish appears
+    var fishLifetime = 1000; // how long fish stays on the screen in ms
+    var minFishSpawn = 300; // minimum time before new fish appears
+    var maxFishSpawn = 700; // maximum time before new fish appears
+    var oddBallRate = 50; // percent
     var avmode = "visual"; // which mode determines whether a fish is "good"
     // two choices: visual or aural
     // this determines which feature the player should be attending to
-    
 
     function setAVMode(mode) {
         avmode = mode;
@@ -32,12 +32,12 @@ var gameModel = (function() {
     var endTime = gameStart + gameDuration * 1000;
 
 
-    var correct=0
-    var incorrect=0;
-    var missed=0;
-    var timeRemaining= gameDuration;
-    var totalReactionTime=1;
-    var lastReactionTime=1;
+    var correct = 0
+    var incorrect = 0;
+    var missed = 0;
+    var timeRemaining = gameDuration;
+    var totalReactionTime = 1;
+    var lastReactionTime = 1;
 
 
 
@@ -63,6 +63,18 @@ var gameModel = (function() {
     var fishSide = 'left';
     var fishCount = 0;
     var fishBirth = 0;
+    
+    function updateParameters(){
+        $("#gameDuration").attr('value',gameDuration);
+        $("#minIFI").attr('value',minFishSpawn);
+        $("#maxIFI").attr('value',maxFishSpawn);
+        $("#lifetime").attr('value',fishLifetime);
+        $("#oddBallRate").attr('value',oddBallRate);
+        
+        
+        
+        
+    }
 
     function shuffle(o) { //v1.0
         for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
@@ -90,6 +102,7 @@ var gameModel = (function() {
     }
 
     function spawnFish() {
+        debugPrint("\n\n\n************\n\n new fish\n\n");
         var now = (new Date()).getTime();
         if (now > endTime) {
             gameControl.endGame();
@@ -104,24 +117,26 @@ var gameModel = (function() {
         fishYVelocity = 0;
         fishPos[0] = (fishSide == 'left') ? 0 : 100;
         newFish = true;
-        
-        if (randInt(2)==0){
-            console.log("oddball!");
-            if (randBool()){
-                fishVisual='none';
-            }else {
-                fishAudio='none';
+
+        if (randInt(100) < oddBallRate) {
+
+            if (randBool()) {
+                debugPrint("spawnFish: novis oddball!");
+                fishVisual = 'none';
+            } else {
+                debugPrint("spawnFish: noaud oddball!");
+                fishAudio = 'none';
             }
         }
 
 
         fishCount++;
-        console.log("spawned fish #" + fishCount + " at time " + (new Date()).getTime());
-        console.log(JSON.stringify([fishVisual, fishVisual, fishSide, fishXVelocity]));
+        debugPrint("spawnFish: spawned fish #" + fishCount + " at time " + (new Date()).getTime());
+        debugPrint("spawnFish:"+JSON.stringify([fishVisual, fishAudio, fishSide, fishXVelocity]));
         setTimeout(killFishIfVisible(fishCount), fishLifetime);
 
         fishBirth = (new Date()).getTime();
-        console.log("about to push birth!");
+        debugPrint("spawnFish: about to push birth!");
         var entry = {
             time: fishBirth - gameStart,
             action: 'birth',
@@ -131,15 +146,15 @@ var gameModel = (function() {
             side: fishSide
         };
         gameControl.pushLog(entry);
-        console.log("just pushed birth" + JSON.stringify(entry));
+        debugPrint("spawnFish: just pushed birth" + JSON.stringify(entry));
         gameView.playFishAudio();
     }
 
 
     function killFishIfVisible(n) {
         return (function() {
-            console.log("Times up!");
             if (fishVisible && (fishCount == n)) {
+                debugPrint("KFIV: Times up!"+fishVisible+" "+fishCount+" "+n);
                 var now = (new Date()).getTime();
                 fishVisible = false;
                 var entry = {
@@ -150,44 +165,47 @@ var gameModel = (function() {
                     side: fishSide
                 };
                 gameControl.pushLog(entry);
-                console.log(entry);
+                debugPrint("KFIV:"+entry);
                 killFish();
-                lastReactionTime=0;
-                if (fishVisual=='none' || fishAudio=='none'){
+                lastReactionTime = 0;
+                if (fishVisual == 'none' || fishAudio == 'none') {
                     gameView.playGood();
-                }else {
-                missed++;
-                gameView.playBad();
+                } else {
+                    missed++;
+                    gameView.playBad();
+                }
             }
-        }});
+        });
     }
 
     function killFish() {
 
         fishVisible = false;
         var delay = minFishSpawn + randInt(maxFishSpawn - minFishSpawn);
-        console.log("fish killed... new fish will spawn in " + delay + " ms");
+        debugPrint("killFish: fish killed... new fish will spawn in " + delay + " ms");
         setTimeout(spawnFish, delay);
         gameView.stopFishAudio();
 
     }
 
     function start() {
+        fishLifetime = parseInt($("#lifetime").val());
+        minFishSpawn = parseInt($("#minIFI").val());
+        maxFishSpawn = parseInt($("#maxIFI").val());
+        gameDuration = parseInt($("#gameDuration").val());
+        oddBallRate = parseInt($("#oddBallRate").val());
+        
         fishVisible = false;
         gameStart = (new Date()).getTime();
         endTime = gameStart + gameDuration * 1000;
         fishCount = 0;
 
-        fishLifetime = parseInt($("#lifetime").val());
-        minFishSpawn = parseInt($("#minIFI").val());
-        maxFishSpawn = parseInt($("#maxIFI").val());
-
         var delay = 1000 + randInt(1000);
-        console.log("game started... new fish will spawn in " + delay + " ms");
+        debugPrint("start: game started... new fish will spawn in " + delay + " ms");
         setTimeout(spawnFish, delay);
 
         setCanvasSize();
-        window.onresize = setCanvasSize; 
+        window.onresize = setCanvasSize;
     };
 
     function setCanvasSize() {
@@ -210,12 +228,12 @@ var gameModel = (function() {
             side: fishSide
         };
         gameControl.pushLog(entry);
-        console.log(JSON.stringify(entry));
-        if (isCorrect=="correct") {
-            correct++; 
-            lastReactionTime = (now-fishBirth);
+        debugPrint("logKeyPress"+JSON.stringify(entry));
+        if (isCorrect == "correct") {
+            correct++;
+            lastReactionTime = (now - fishBirth);
             totalReactionTime += lastReactionTime;
-        }else {
+        } else {
             incorrect++;
             lastReactionTime = 0;
         }
@@ -230,7 +248,7 @@ var gameModel = (function() {
         var dt = (now - lastTime) / 1000.0;
         var theTime = (now - gameStart);
         imageOffset += imageSpeed * dt;
-        timeRemaining = gameDuration-theTime/1000;
+        timeRemaining = gameDuration - theTime / 1000;
 
         lastTime = now;
 
@@ -241,7 +259,7 @@ var gameModel = (function() {
         if (!fishVisible) return;
 
         fishPos[0] += fishXVelocity * dt;
-        //console.log("fishpos = "+JSON.stringify([fishPos,fishXVelocity,dt,fishXVelocity*dt]));
+        //debugPrint("fishpos = "+JSON.stringify([fishPos,fishXVelocity,dt,fishXVelocity*dt]));
         if (fishPos[0] > 100) {
             fishXVelocity *= -1;
         } else if (fishPos[0] < 0) {
@@ -253,15 +271,16 @@ var gameModel = (function() {
     function analyzeLog(log) {
         var slowSlow = 0;
     }
-    
-    function getStatus(){
-        return(
-            {correct:correct, 
-             incorrect:incorrect, 
-             missed:missed,
-             totalReactionTime:totalReactionTime,
-             lastReactionTime: lastReactionTime,
-             timeRemaining:timeRemaining});
+
+    function getStatus() {
+        return ({
+            correct: correct,
+            incorrect: incorrect,
+            missed: missed,
+            totalReactionTime: totalReactionTime,
+            lastReactionTime: lastReactionTime,
+            timeRemaining: timeRemaining
+        });
     }
 
     return {
@@ -291,6 +310,7 @@ var gameModel = (function() {
         logKeyPress: logKeyPress,
         update: update,
         setAVMode: setAVMode,
-        getStatus: getStatus
+        getStatus: getStatus,
+        updateParameters: updateParameters
     }
 }());
