@@ -12,6 +12,13 @@ When a fish is spawned, the visual and auditory oscillations are selected as are
 
 var gameModel = (function() {
     debugPrint("creating gameModel");
+    
+    var userLevel = getUserLevel();
+    
+    function getUserLevel(){
+        window.localStorage.level = window.localStorage.level || 0;
+        return window.localStorage.level;
+    }
 
     var fishLifetime = 1000; // how long fish stays on the screen in ms
     var minFishSpawn = 300; // minimum time before new fish appears
@@ -65,6 +72,7 @@ var gameModel = (function() {
     var fishBirth = 0;
     
     function updateParameters(){
+        $("#level").html(userLevel);
         $("#gameDuration").attr('value',gameDuration);
         $("#minIFI").attr('value',minFishSpawn);
         $("#maxIFI").attr('value',maxFishSpawn);
