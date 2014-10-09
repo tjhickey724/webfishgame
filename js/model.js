@@ -17,13 +17,38 @@ var gameModel = (function() {
     
     function getUserLevel(){
         window.localStorage.level = window.localStorage.level || 0;
-        return window.localStorage.level;
+        return parseInt(window.localStorage.level);
+    }
+    
+    function incrementUserLevel(){
+        userLevel += 1;
+        window.localStorage.level = userLevel;
+        
+        return userLevel;
+    }
+    
+    function getFishLifetime(level){
+        return 2000-level*150;
+    }
+    
+    function getMinFishSpawn(level){
+        return 1000 - level*25;
+    }
+    
+    function getMaxFishSpawn(level){
+        return 2000 - level*50;
+    }
+    
+    function getOddBallRate(level){
+        return level*5;
     }
 
-    var fishLifetime = 1000; // how long fish stays on the screen in ms
-    var minFishSpawn = 300; // minimum time before new fish appears
-    var maxFishSpawn = 700; // maximum time before new fish appears
-    var oddBallRate = 50; // percent
+    var fishLifetime = getFishLifetime(userLevel); // how long fish stays on the screen in ms
+    var minFishSpawn = getMinFishSpawn(userLevel); // minimum time before new fish appears
+    var maxFishSpawn = getMaxFishSpawn(userLevel); // maximum time before new fish appears
+    var oddBallRate = getOddBallRate(userLevel); // percent
+    
+    
     var avmode = "visual"; // which mode determines whether a fish is "good"
     // two choices: visual or aural
     // this determines which feature the player should be attending to
@@ -35,7 +60,7 @@ var gameModel = (function() {
 
     // record the start time of the game and set the end time, all games are the same length
     var gameStart = (new Date()).getTime();
-    var gameDuration = 60; // in seconds
+    var gameDuration = 10; // in seconds
     var endTime = gameStart + gameDuration * 1000;
 
 
@@ -74,10 +99,10 @@ var gameModel = (function() {
     function updateParameters(){
         $("#level").html(userLevel);
         $("#gameDuration").attr('value',gameDuration);
-        $("#minIFI").attr('value',minFishSpawn);
-        $("#maxIFI").attr('value',maxFishSpawn);
-        $("#lifetime").attr('value',fishLifetime);
-        $("#oddBallRate").attr('value',oddBallRate);
+        $("#minIFI").attr('value',getMinFishSpawn(userLevel));
+        $("#maxIFI").attr('value',getMaxFishSpawn(userLevel));
+        $("#lifetime").attr('value',getFishLifetime(userLevel));
+        $("#oddBallRate").attr('value',getOddBallRate(userLevel));
         
         
         
@@ -319,6 +344,7 @@ var gameModel = (function() {
         update: update,
         setAVMode: setAVMode,
         getStatus: getStatus,
-        updateParameters: updateParameters
+        updateParameters: updateParameters,
+        incrementUserLevel: incrementUserLevel
     }
 }());

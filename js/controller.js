@@ -9,8 +9,10 @@ var gameControl = (function() {
             window.location.hash = '#' + selected;
             $('.view').hide();
             $('#'+selected+'-view').show();
+            
             if (selected=="game"){
-                $('#header').hide();
+                //$('#header').hide();
+                $("#canvas").css("display","block");
             }else {
                 $('#header').show();
             }
@@ -88,6 +90,7 @@ var gameControl = (function() {
     /** handle a key press. We only recognize P and L for now.
     **/
     function keyDownHandler(event) {
+        if (window.location.hash != "#game") return;
         
         var now = (new Date()).getTime();
         var keyPressed = String.fromCharCode(event.keyCode);
@@ -187,10 +190,27 @@ var gameControl = (function() {
 
     }
     
+    function getPercentCorrect(){
+        var totalTries = gameStats.fast.fast.tries + gameStats.fast.slow.tries + gameStats.slow.fast.tries + gameStats.slow.slow.tries;
+        var totalCorrect = gameStats.fast.fast.correct + gameStats.fast.slow.correct + gameStats.slow.fast.correct + gameStats.slow.slow.correct;
+        var percent = (totalTries==0)? 0: totalCorrect*100/totalTries;
+        return percent;
+    }
+    
     function endGame(){
         var logelt = document.getElementById('log');
+        var percentCorrect = getPercentCorrect();
+        var msgString = "Sorry you did not advance to the next level...";
+
+        if (percentCorrect > 90) {
+            var userLevel = gameModel.incrementUserLevel();
+
+            alert("new level is "+userLevel);
+            msgString = "Congrats!!! You have advanced to level "+ userLevel;
+        }
         //logelt.textContent = JSON.stringify(gameStats)+"\n\n\n"+(JSON.stringify(log));
-        var statString = "<h2>Congruent</h2><ul><li>"
+        var statString = "<h2>Congruent</h2>"+ "Percent correct: "+getPercentCorrect() + "<br/>"+msgString+
+          "<ul><li>"
            +JSON.stringify(gameStats.fast.fast)+"</li><li>"
            +JSON.stringify(gameStats.slow.slow)+"</li></ul><h2>Incongruent</h2><ul><li>"
            +JSON.stringify(gameStats.fast.slow)+"</li><li>"
@@ -218,9 +238,17 @@ var gameControl = (function() {
         startGame();
     }
     
+    function consent(){
+        window.localStorage.consentStatus = "consented";
+        showView("dashboard");
+    }
+    
     
     function start(){
-        showView("consent");
+        if (window.localStorage.consentStatus != "consented")
+            showView("consent");
+        else
+            showView("dashboard");
     }
     
     function startGame(){
@@ -235,7 +263,8 @@ var gameControl = (function() {
         runVisual:runVisual,
         runAural:runAural,
         pushLog:pushLog,
-        endGame:endGame
+        endGame:endGame,
+        consent:consent
     })
 
 }())
