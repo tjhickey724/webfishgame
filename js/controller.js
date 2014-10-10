@@ -11,7 +11,7 @@ var gameControl = (function() {
             $('#'+selected+'-view').show();
             
             if (selected=="game"){
-                //$('#header').hide();
+                $('#header').hide();
                 $("#canvas").css("display","block");
             }else {
                 $('#header').show();
