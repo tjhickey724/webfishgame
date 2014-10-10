@@ -191,15 +191,36 @@ var gameControl = (function() {
     }
     
     function getPercentCorrect(){
-        var totalTries = gameStats.fast.fast.tries + gameStats.fast.slow.tries + gameStats.slow.fast.tries + gameStats.slow.slow.tries;
-        var totalCorrect = gameStats.fast.fast.correct + gameStats.fast.slow.correct + gameStats.slow.fast.correct + gameStats.slow.slow.correct;
-        var percent = (totalTries==0)? 0: totalCorrect*100/totalTries;
-        return percent;
+        var totalCongTries = gameStats.fast.fast.tries + gameStats.slow.slow.tries;
+        var totalCongCorrect = gameStats.fast.fast.correct  + gameStats.slow.slow.correct;
+        var totalIncongTries =  gameStats.fast.slow.tries + gameStats.slow.fast.tries ;
+        var totalIncongCorrect =  gameStats.fast.slow.correct + gameStats.slow.fast.correct ;
+        
+        var reactionCong = (totalCongTries==0)?0:(gameStats.fast.fast.time + gameStats.slow.slow.time)/totalCongTries;
+        var reactionIncong = (totalIncongTries==0)?0:(gameStats.fast.slow.time + gameStats.slow.fast.time)/totalIncongTries;
+        
+        var totalTries = totalCongTries+totalIncongTries;
+        var totalCorrect = totalCongCorrect+totalIncongCorrect;
+        
+        var totalOddballTries = gameStats.none.fast.tries+gameStats.none.slow.tries+gameStats.fast.none.tries+gameStats.slow.none.tries;
+        var totalOddballCorrect = 
+            gameStats.none.fast.missed+gameStats.none.slow.missed+gameStats.fast.none.missed+gameStats.slow.none.missed;
+
+            
+        totalAllTries = totalTries + totalOddballTries;
+        totalAllCorrect = totalCorrect+ totalOddballCorrect;
+        
+        var Allpercent = (totalAllTries==0)? 0: totalAllCorrect*100/totalAllTries;
+        var CongPercent = (totalCongTries==0)? 0: totalCongCorrect*100/totalCongTries;
+        var IncongPercent = (totalIncongTries==0)? 0: totalIncongCorrect*100/totalIncongTries;
+        var OddballPercent = (totalOddballTries==0)? 0: totalOddballCorrect*100/totalOddballTries;
+        return [Allpercent,CongPercent,IncongPercent,OddballPercent,reactionCong,reactionIncong,totalCongTries,totalIncongTries];
     }
     
     function endGame(){
         var logelt = document.getElementById('log');
-        var percentCorrect = getPercentCorrect();
+        var stats = getPercentCorrect();
+        var percentCorrect = stats[0];
         var msgString = "Sorry you did not advance to the next level...";
 
         if (percentCorrect > 90) {
@@ -209,12 +230,13 @@ var gameControl = (function() {
             msgString = "Congrats!!! You have advanced to level "+ userLevel;
         }
         //logelt.textContent = JSON.stringify(gameStats)+"\n\n\n"+(JSON.stringify(log));
-        var statString = "<h2>Congruent</h2>"+ "Percent correct: "+getPercentCorrect() + "<br/>"+msgString+
+        var statString = "<h2> Percent correct: "+Math.round(stats[0]) + "<br/>"+msgString+"</h2>"+
+          "<h2>Congruent: " + stats[6]+" tries "+ Math.round(stats[4])+"ms/correct "+Math.round(stats[1])+"% correct"+ "</h2>"+ 
           "<ul><li>"
            +JSON.stringify(gameStats.fast.fast)+"</li><li>"
-           +JSON.stringify(gameStats.slow.slow)+"</li></ul><h2>Incongruent</h2><ul><li>"
+           +JSON.stringify(gameStats.slow.slow)+"</li></ul><h2>Incongruent " + stats[7]+" tries "+Math.round(stats[5])+"ms/correct "+Math.round(stats[2])+"% correct"+ "</h2><ul><li>"
            +JSON.stringify(gameStats.fast.slow)+"</li><li>"
-           +JSON.stringify(gameStats.slow.fast)+"</li></ul><br/><h2>OddBall</h2><ul><li>"
+           +JSON.stringify(gameStats.slow.fast)+"</li></ul><br/><h2>OddBall " +Math.round(stats[3])+"% correct"+ "</h2><ul><li>"
            +JSON.stringify(gameStats.none.fast)+"</li><li>"
            +JSON.stringify(gameStats.none.slow)+"</li><li>"
            +JSON.stringify(gameStats.fast.none)+"</li><li>"
@@ -227,12 +249,14 @@ var gameControl = (function() {
     }
     
     function runVisual(){
+        setSkin();
         showView("game");
         gameModel.setAVMode("visual");
         startGame();
     }
     
     function runAural(){
+        setSkin();
         showView("game");
         gameModel.setAVMode("audio");
         startGame();
@@ -251,6 +275,12 @@ var gameControl = (function() {
             showView("dashboard");
     }
     
+    function setSkin(){
+        var skinsel = $("#skin option:selected");
+        var a = skinsel.text();
+        gameView.setSkin(a);
+    }
+    
     function startGame(){
         gameLoop.start(); 
         gameModel.start();   
@@ -264,7 +294,8 @@ var gameControl = (function() {
         runAural:runAural,
         pushLog:pushLog,
         endGame:endGame,
-        consent:consent
+        consent:consent,
+        setSkin: setSkin
     })
 
 }())

@@ -39,20 +39,9 @@
 	</div>
 	
 	<div id="dashboard-view" class="view">
-		<h1>Choose a Game Type</h1>
-		<button id="visual" onclick="gameControl.runVisual()"> Visual </button>
-		<br/>
-		<button id="aural" onclick="gameControl.runAural()"> Aural</button>
-		<h1>Level <span id="level">0</span></h1>
-
-		<h1>Set Parameters</h1>
-		<div>
-			<input type="text" id="gameDuration" value="60"> game Length (in sec)<br/>
-			<input type="text" id="lifetime" value="2000"> fish lifetime (in ms)<br/>
-			<input type="text" id="minIFI" value="500"> minimum interfish interval (in ms)<br/>
-			<input type="text" id="maxIFI" value="2000"> maximum interfish interval (in ms)<br/>
-			<input type="text" id="oddBallRate" value="25"> maximum interfish interval (in percent)<br/>
-		</div>
+		<h1>Your Current Skill Level is <span id="level">0</span>/10</h1>
+		<button id="resetLevel" onclick="gameModel.resetUserLevel();$('#level').html(0)">Reset User Level to 0 </button>
+		<div id="rules">
 		<h1>Rules</h1>
 		<ul><li>
 		The good fish are those that oscillate slowly, the bad fish oscillate quickly.
@@ -65,7 +54,34 @@
 		</li><li>
 		BUT if fish has no audio or no video it is an oddball and you shouldn't press any keys!
 		</li></ul>
+		</div>
+		
+		<h1>Choose a Game Type:
+		<button id="visual" onclick="gameControl.runVisual()"> Visual </button>
+		<button id="aural" onclick="gameControl.runAural()"> Aural</button>
+		</h1>
+		
+		<h1> Choose a Theme:
+			<select id="skin">
+		        <option>fish</option> <option>space</option>
+		    </select> 
+		</h1>
+		
+
+
+		<h1>Set Parameters</h1>
+		<div>
+			<input type="text" id="gameDuration" value="60"> game Length (in sec)<br/>
+			<input type="text" id="fishSizePercent" value="20"> fish size (in percent of screen width)<br/>
+			<input type="text" id="lifetime" value="2000"> fish lifetime (in ms)<br/>
+			<input type="text" id="minIFI" value="500"> minimum interfish interval (in ms)<br/>
+			<input type="text" id="maxIFI" value="2000"> maximum interfish interval (in ms)<br/>
+			<input type="text" id="oddBallRate" value="25"> oddball rate (in percent)<br/>
 			
+
+		</div>
+		
+
 		</div>
 		
 		

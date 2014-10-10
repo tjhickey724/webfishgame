@@ -20,6 +20,10 @@ var gameModel = (function() {
         return parseInt(window.localStorage.level);
     }
     
+    function resetUserLevel(){
+        window.localStorage.level = 0;
+    }
+    
     function incrementUserLevel(){
         userLevel += 1;
         window.localStorage.level = userLevel;
@@ -60,7 +64,7 @@ var gameModel = (function() {
 
     // record the start time of the game and set the end time, all games are the same length
     var gameStart = (new Date()).getTime();
-    var gameDuration = 10; // in seconds
+    var gameDuration = 180; // in seconds
     var endTime = gameStart + gameDuration * 1000;
 
 
@@ -79,7 +83,7 @@ var gameModel = (function() {
 
     // state of scrolling background
     var imageOffset = 0; // this varies from -100 to 100
-    var imageSpeed = 30; // this is in percent of height per second
+    var imageSpeed = 10; // this is in percent of height per second
     // state of timing
     var lastTime = (new Date()).getTime();
 
@@ -95,6 +99,7 @@ var gameModel = (function() {
     var fishSide = 'left';
     var fishCount = 0;
     var fishBirth = 0;
+    var fishSizePercent = 20;
     
     function updateParameters(){
         $("#level").html(userLevel);
@@ -103,6 +108,7 @@ var gameModel = (function() {
         $("#maxIFI").attr('value',getMaxFishSpawn(userLevel));
         $("#lifetime").attr('value',getFishLifetime(userLevel));
         $("#oddBallRate").attr('value',getOddBallRate(userLevel));
+        
         
         
         
@@ -337,6 +343,9 @@ var gameModel = (function() {
         getFishSide: function() {
             return fishSide;
         },
+        getFishSizePercent: function(){
+            return $("#fishSizePercent").val();
+        },
         killFish: killFish,
         isGoodFish: isGoodFish,
         start: start,
@@ -345,6 +354,7 @@ var gameModel = (function() {
         setAVMode: setAVMode,
         getStatus: getStatus,
         updateParameters: updateParameters,
-        incrementUserLevel: incrementUserLevel
+        incrementUserLevel: incrementUserLevel,
+        resetUserLevel: resetUserLevel
     }
 }());

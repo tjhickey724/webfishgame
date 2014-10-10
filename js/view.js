@@ -4,22 +4,39 @@ this object has an update method which draws the current model onto the canvas
 
 var gameView = (function(){
         debugPrint("creating gameView");
+
     
     var canvas = document.getElementById('canvas'),
         cw = canvas.width,
         ch = canvas.height,
         cx = null;
 
+    // Here we load up the background images to be used in the game!
+    var imgStream = new Image();
+    imgStream.src = 'images/stream.jpg';
 
-    var img1 = new Image();
-    img1.src = 'images/stream.jpg';
+    var imgSpace = new Image();
+    imgSpace.src = 'images/o-HUBBLE-UV-900.jpg';
     
+    var img1 = imgStream;
+    
+    // next the "Fish" images
     var imgFishL = new Image();
     imgFishL.src = 'images/fish/fishL.png';
-    
+
     var imgFishR = new Image();
     imgFishR.src = 'images/fish/fishR.png';
+    
+    var imgSpaceshipL = new Image();
+    imgSpaceshipL.src = 'images/spaceship/SpaceShipNormalL.png';
+    
+    var imgSpaceshipR = new Image();
+    imgSpaceshipR.src = 'images/spaceship/SpaceShipNormalR.png'
 
+    var imgTargetL = imgFishL;
+    var imgTargetR = imgFishR;
+    
+    // Here we load up the sounds to be used ..
     
     var audioFastFish = new Audio('sounds/8hz/fish.wav'); //document.getElementById('fastFish');
     audioFastFish.addEventListener('ended', function() {
@@ -35,8 +52,23 @@ var gameView = (function(){
     var audioGood = new Audio('sounds/good.wav'); 
     var audioBad = new Audio('sounds/bad.wav'); 
     
+    
     var soundFast = new Audio('sounds/8hz/fish.wav'); 
     var soundSlow = new Audio('sounds/5hz/fish.wav'); 
+    var soundOddball = new Audio('sounds/5hzHigh/fish.wav');
+
+    function setSkin(skin){
+        if (skin=="fish"){
+            imgTargetL = imgFishL;
+            imgTargetR = imgFishR;
+            img1 = imgStream;
+        }else if (skin=="space"){
+            imgTargetL = imgSpaceshipL;
+            imgTargetR = imgSpaceshipR;
+            img1 = imgSpace;
+        }
+    }
+    
     
     function playGood(){
         audioGood.play();
@@ -48,6 +80,11 @@ var gameView = (function(){
     
     function playFishAudio(){
         fishSound = (gameModel.getFishAudio()=='fast')?soundFast:soundSlow;
+        
+        //if (gameModel.getFishVisual() == 'none'){
+        //    fishSound = soundOddball; 
+        //} 
+        
         if (gameModel.getFishAudio()!='none')
             fishSound.play();
     }
@@ -70,7 +107,7 @@ var gameView = (function(){
             return;
         }
         if (gameModel.getFishVisible()){
-            drawFish(imgFishL,hz);
+            drawFish([imgTargetL,imgTargetR],hz);
         }
 
         
@@ -82,6 +119,7 @@ function drawStats(){
     var cw = canvas.width;
     var ch = canvas.height;
     ctx.font = "10pt monospace"
+    ctx.fillStyle='#FFAA33';
     var status  =gameModel.getStatus();
     var correctness = Math.round(100*status.correct/(status.correct+status.incorrect+status.missed));
     ctx.fillText(""+correctness+"%",cw/2-30, ch/2);
@@ -98,11 +136,12 @@ function drawFish(img,hz){
     var cw = canvas.width;
     var ch = canvas.height;
     var fishPos = gameModel.getFishPos();
-    var w = cw/5;
-    var h = w*img.height/img.width;
+    var fishImage = (gameModel.getFishSide()=='left')?img[0]:img[1];
+    var w = cw*gameModel.getFishSizePercent()/100;
+    var h = w*fishImage.height/fishImage.width;
     var sec = ((new Date()).getTime() % 1000)/1000.0;
     var scale = 1+(1-Math.cos(Math.PI*2*hz*sec))/2*1.0;
-    var fishImage = (gameModel.getFishSide()=='left')?imgFishL:imgFishR;
+
     var hscale = (gameModel.getFishSide()=='left')?1:-1;
 
     var x = fishPos[0]*cw/100-w/2;
@@ -164,6 +203,7 @@ one can flip the canvas vertically, then translate y'+h from the bottom and draw
         playGood: playGood,
         playBad: playBad,
         playFishAudio: playFishAudio,
-        stopFishAudio: stopFishAudio
+        stopFishAudio: stopFishAudio,
+        setSkin: setSkin
     })
 }())
