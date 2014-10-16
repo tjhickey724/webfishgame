@@ -222,6 +222,7 @@ var gameControl = (function() {
         var stats = getPercentCorrect();
         var percentCorrect = stats[0];
         var msgString = "Sorry you did not advance to the next level...";
+        uploadStats(gameStats);
 
         if (percentCorrect > 90) {
             var userLevel = gameModel.incrementUserLevel();
@@ -246,6 +247,19 @@ var gameControl = (function() {
         $("#log").html( statString+"<\hr>"+(JSON.stringify(log)))
         showView("log");
         gameLoop.stop();
+    }
+    
+    function uploadStats(gameStats){
+        console.log("uploading stats!!");
+        $.ajax({
+               type: "POST",
+               url: "http://localhost:4000/model/gamestats",
+               data: JSON.stringify({user:"tim",stats:gameStats}),
+               contentType: "application/json; charset=utf-8",
+               dataType: "json"
+           }).done(function(items) {
+               console.log("upload complete"+JSON.stringify(items));
+           });
     }
     
     function runVisual(){
